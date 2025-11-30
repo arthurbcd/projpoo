@@ -5,14 +5,15 @@
 /Users/art/Documents/GitHub/proj/src/main/java/com/proj/model/Teacher.java
 /Users/art/Documents/GitHub/proj/src/main/java/com/proj/model/Category.java
 /Users/art/Documents/GitHub/proj/src/main/java/com/proj/state/StartedSessionState.java
+/Users/art/Documents/GitHub/proj/src/main/java/com/proj/manager/SessionManager.java
 /Users/art/Documents/GitHub/proj/src/main/java/com/proj/model/Course.java
 /Users/art/Documents/GitHub/proj/src/main/java/com/proj/state/EndedSessionState.java
-/Users/art/Documents/GitHub/proj/src/main/java/com/proj/model/Action.java
 /Users/art/Documents/GitHub/proj/src/main/java/com/proj/observer/Observable.java
 /Users/art/Documents/GitHub/proj/src/main/java/com/proj/state/FullSessionState.java
 /Users/art/Documents/GitHub/proj/src/main/java/com/proj/App.java
 /Users/art/Documents/GitHub/proj/src/main/java/com/proj/observer/Observer.java
 /Users/art/Documents/GitHub/proj/src/main/java/com/proj/state/SessionState.java
+/Users/art/Documents/GitHub/proj/src/main/java/com/proj/manager/CourseManager.java
 /Users/art/Documents/GitHub/proj/src/main/java/com/proj/model/Student.java
 /Users/art/Documents/GitHub/proj/src/main/java/com/proj/model/Session.java
 /Users/art/Documents/GitHub/proj/src/main/java/com/proj/SecondaryController.java

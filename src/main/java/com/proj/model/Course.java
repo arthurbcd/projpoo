@@ -27,7 +27,6 @@ public class Course {
         this.prerequisites.add(course);
     }
 
-    // Getters and Setters
     public String getTitle() {
         return title;
     }

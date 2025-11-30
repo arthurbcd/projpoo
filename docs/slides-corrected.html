@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Gestion de Formations – Slides</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --fg: #111;
+            --bg: #fff;
+            --accent: #1f6feb;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            color: var(--fg);
+            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .deck {
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .slide {
+            width: 960px;
+            height: 540px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 50px 60px;
+            margin: 20px auto;
+            background: var(--bg);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--fg);
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            margin: 10px 0;
+            padding-left: 24px;
+        }
+
+        li {
+            margin: 8px 0;
+            font-size: 15px;
+        }
+
+        code {
+            background: #f6f8fa;
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        pre {
+            background: #0f172a;
+            color: #e5e7eb;
+            padding: 12px 14px;
+            border-radius: 8px;
+            overflow: auto;
+            font-size: 11px;
+            line-height: 1.4;
+            margin: 10px 0;
+            flex-shrink: 0;
+        }
+
+        pre code {
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        .footer {
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+            margin-top: auto;
+            padding-top: 24px;
+        }
+
+        .title-slide {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .title-slide .title {
+            font-size: 48px;
+            margin-bottom: 30px;
+            color: var(--accent);
+        }
+
+        .title-slide .subtitle {
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+
+        .authors {
+            font-size: 20px;
+            margin: 15px 0;
+            color: var(--fg);
+        }
+
+        .note {
+            font-size: 12px;
+            font-style: italic;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        /* Print/PDF */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .slide {
+                page-break-after: always;
+                box-shadow: none;
+                border: none;
+                margin: 0;
+            }
+
+            .deck {
+                padding: 0;
+            }
+        }
+
+        /* Force exact slide size PDF (960x540) with no margins */
+        @page {
+            size: 960px 540px;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="deck">
+
+        <section class="slide title-slide">
+            <div class="title">Application de Gestion d'un Centre de Formation</div>
+            <div class="subtitle">Gestion des Formations, Sessions, Formateurs et Apprenants</div>
+            <div class="authors">Arthur MONTEIRO MIRANDA</div>
+            <div class="authors">Bianka DOS SANTOS GOUVÊA</div>
+            <div class="footer">03 décembre 2025</div>
+        </section>
+
+        <section class="slide">
+            <div class="title">Contexte & Objectifs</div>
+            <ul>
+                <li>Faciliter le suivi des formations et la planification des sessions.</li>
+                <li>Gérer les formateurs (spécialités) et apprenants (historique).</li>
+                <li>Inscriptions avec liste d'attente quand session complète.</li>
+                <li>Notifications automatiques (session complète, libération de place).</li>
+            </ul>
+            <div class="footer">1 / 13</div>
+        </section>
+
+        <section class="slide">
+            <div class="title">Exigences Fonctionnelles (Résumé)</div>
+            <ul>
+                <li>Catalogue: ajouter, modifier, supprimer des formations.</li>
+                <li>Sessions: formation, formateur, planning, places limitées, états.</li>
+                <li>Acteurs: formateur (spécialités), apprenant (coordonnées, historique).</li>
+                <li>Inscriptions: si ouverte et non complète, sinon liste d'attente.</li>
+                <li>Notifications: formateur notifié quand session complète.</li>
+            </ul>
+            <div class="footer">2 / 13</div>
+        </section>
+
+        <section class="slide">
+            <div class="title">Architecture MVC</div>
+            <ul>
+                <li>Modèle: entités métier (Formation, Session, Formateur, Apprenant, Inscription).</li>
+                <li>Contrôleur: Singletons <code>FormationManager</code> et <code>SessionManager</code>.</li>
+                <li>Vue: JavaFX construite en code.</li>
+                <li>Couplage faible et base extensible.</li>
+            </ul>
+            <pre><code>// Contrôleur (Singleton)
+public class SessionManager {
+  private static final SessionManager INSTANCE = new SessionManager();
+  private final Map<String, Session> sessions = new HashMap<>();
+  private SessionManager() {}
+  public static SessionManager getInstance() { return INSTANCE; }
+
+  public Session create(Course course, LocalDate startAt, LocalDate endAt,
+                        int maxPlaces, Teacher teacher) {
+    Session s = new Session(course, startAt, endAt, maxPlaces, teacher);
+    sessions.put(s.getId(), s);
+    course.addSession(s);
+    return s;
+  }
+}
+            </code></pre>
+            <div class="note">Note: Course = Formation, Teacher = Formateur, Student = Apprenant dans le code</div>
+            <div class="footer">3 / 13</div>
+        </section>
+
+        <section class="slide">
+            <div class="title">Modèle – Principales Classes</div>
+            <ul>
+                <li><code>Formation</code> (titre, durée, catégorie, liste de sessions).</li>
+                <li><code>Session</code> (formation, formateur, planning, places, état, waitlist).</li>
+                <li><code>Formateur</code> (spécialités), <code>Apprenant</code> (historique).</li>
+                <li><code>Inscription</code>, <code>Category</code> (enum).</li>
+            </ul>
+            <div class="note">Note: noms anglais utilisés dans le code (Course, Teacher, Student)</div>
+            <div class="footer">4 / 13</div>
+        </section>
+
+        <section class="slide">
+            <div class="title">Design Patterns Utilisés</div>
+            <ul>
+                <li>State: gérer les états de session (ouverte, complète, terminée, annulée).</li>
+                <li>Observer: notifier apprenants et formateurs lors de changements.</li>
+                <li>Singleton: gestionnaire central <code>FormationManager</code>, <code>SessionManager</code>.</li>
+                <li>Justification: clarté, isolation et simplicité.</li>
+            </ul>
+            <pre><code>// State Pattern
+public interface SessionState {
+  String getNotifyMessage();
+  default String getLabel() {
+    return getClass().getSimpleName().replaceFirst("SessionState$", "").toLowerCase();
+  }
+  default void subscribe(Session s, Student st) {
+    throw new IllegalStateException("Cannot subscribe to a " + getLabel() + " session.");
+  }
+  default void start(Session s, Teacher t) {
+    throw new IllegalStateException("Cannot start a " + getLabel() + " session.");
+  }
+  // ... autres méthodes (unsubscribe, cancel, end)
+}
+
+public class OpenSessionState implements SessionState {
+  public String getNotifyMessage() { return "Session is now open for subscriptions."; }
+  public void start(Session s, Teacher t) { s.setState(new StartedSessionState(t)); }
+  public void cancel(Session s, Teacher t) { s.setState(new CanceledSessionState(t)); }
+}
+            </code></pre>
+            <div class="footer">5 / 13</div>
+        </section>
+
+        <section class="slide">
+            <div class="title">États de Session</div>
+            <ul>
+                <li>Ouverte → Complète (capacité atteinte).</li>
+                <li>Ouverte/Complète → Démarrée.</li>
+                <li>Démarrée → Terminée.</li>
+                <li>Ouverte/Complète/Démarrée → Annulée.</li>
+                <li>Transitions gérées par le State pattern.</li>
+            </ul>
+            <div class="footer">6 / 13</div>
+        </section>
+
+        <section class="slide">
+            <div class="title">Flux d'Inscription & Liste d'Attente</div>
+            <ul>
+                <li>Apprenant s'inscrit si session ouverte et non complète.</li>
+                <li>Si complète: ajout à la <code>waitlist</code> (FIFO).</li>
+                <li>Libération d'une place: promotion automatique.</li>
+                <li>Notifications lors de la promotion.</li>
+            </ul>
+            <pre><code>// Session.subscribe (extrait)
+public void subscribe(Student student) {
+    if (isSubscribed(student.getId())) {
+        throw new IllegalStateException("Student is already subscribed to this session.");
+    }
+    // déléguer la logique spécifique à l'état
+    state.subscribe(this, student);
+
+    if (isFull()) {
+        addToWaitlist(student);
+        return; // waitlist au lieu de rejet
+    }
+
+    students.put(student.getId(), student);
+    addObserver(student);
+    Inscription inscription = new Inscription(student, this);
+    inscriptions.put(student.getId(), inscription);
+    student.addInscription(inscription);
+
+    if (isFull()) {
+        notifyObservers("Session " + id + " is now full.");
+    }
+}
+
+private void promoteFromWaitlist() {
+    if (!isFull() && !waitlist.isEmpty()) {
+        Student next = waitlist.poll();
+        subscribe(next);
+        notifyObservers("Student " + next.getName() + " promoted from waitlist to session " + id);
+    }
+}
+            </code></pre>
+            <div class="footer">7 / 13</div>
+        </section>
+
+        <section class="slide">
+            <div class="title">Notifications (Observer)</div>
+            <ul>
+                <li>Observers: formateur + apprenants inscrits.</li>
+                <li>Événements: changement d'état, session complète, libération de place.</li>
+                <li>Messages simples, extensibles selon besoins.</li>
+            </ul>
+            <pre><code>// Enregistrement des observers
+public Session(Course course, LocalDate startAt, LocalDate endAt,
+               int maxPlaces, Teacher teacher) {
+  this.course = course;
+  this.startAt = startAt;
+  this.endAt = endAt;
+  this.maxPlaces = maxPlaces;
+  this.teacher = teacher;
+  addObserver(teacher); // formateur notifié automatiquement
+}
+
+public void setState(SessionState state) {
+  this.state = state;
+  String message = state.getNotifyMessage();
+  System.out.println(message);
+  notifyObservers(message);
+}
+            </code></pre>
+            <div class="footer">8 / 13</div>
+        </section>
+
+        <section class="slide">
+            <div class="title">Structures de Données</div>
+            <ul>
+                <li>Maps en mémoire pour catalogue et sessions.</li>
+                <li>Map d'inscrits et d'inscriptions par session.</li>
+                <li>Queue (LinkedList) pour la liste d'attente.</li>
+            </ul>
+            <div class="footer">9 / 13</div>
+        </section>
+
+        <section class="slide">
+            <div class="title">Conformité aux Contraintes Techniques</div>
+            <ul>
+                <li>Collections standard Java (List, Map, Queue).</li>
+                <li>Patterns conformes aux objectifs pédagogiques.</li>
+            </ul>
+            <pre><code>// Vue JavaFX (extrait)
+private void createUI(Stage stage) {
+  VBox root = new VBox(10);
+  Button enrollAlice = new Button("Inscrire Alice");
+  enrollAlice.setOnAction(e -> enrollStudent(student1));
+  // ... autres composants et listes
+  stage.setScene(new Scene(new ScrollPane(root), 800, 600));
+}
+            </code></pre>
+            <div class="footer">10 / 13</div>
+        </section>
+
+        <section class="slide">
+            <div class="title">Aperçu de l’Interface</div>
+            <div>
+                <img src="ui.png" alt="Aperçu de l'interface"
+                    style="max-width: 90%; height: auto; border: 1px solid #e5e7eb; border-radius: 6px;" />
+            </div>
+            <div class="footer">11 / 13</div>
+        </section>
+
+        <section class="slide">
+            <div class="title">Limitations & Extensions Futures</div>
+            <ul>
+                <li>Non implémenté: pré-requis, reporting, formations hybrides.</li>
+                <li>Decorator (options formation) et Factory (types sessions) non implémentés.</li>
+                <li>Évolutions possibles: validation pré-requis, rapports, persistance BD.</li>
+            </ul>
+            <div class="footer">11 / 13</div>
+        </section>
+
+        <section class="slide">
+            <div class="title">Conclusion</div>
+            <ul>
+                <li>Application fonctionnelle conforme aux exigences principales.</li>
+                <li>Code organisé, patterns cohérents (State, Observer, Singleton).</li>
+                <li>Base extensible pour futures fonctionnalités.</li>
+            </ul>
+            <div class="footer">13 / 13</div>
+        </section>
+
+        <section class="slide">
+            <div class="title" style="text-align:center; font-size:44px;">Merci !</div>
+            <div class="footer">14 / 14</div>
+        </section>
+
+    </div>
+</body>
+
+</html>

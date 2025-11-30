@@ -11,6 +11,13 @@ public class FullSessionState implements SessionState {
     }
 
     @Override
+    public void subscribe(Session session, Student student) {
+        // La session gère la liste d'attente; aucun rejet ici
+        // No-op: Session.subscribe() détectera l'état plein et mettra l'apprenant en
+        // file d'attente
+    }
+
+    @Override
     public void unsubscribe(Session session, Student student) {
         session.setState(new OpenSessionState());
     }

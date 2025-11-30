@@ -40,7 +40,6 @@ public class Student implements Observer {
         return false;
     }
 
-    // Getters and Setters
     public String getId() {
         return id;
     }

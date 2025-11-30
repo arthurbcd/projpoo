@@ -13,14 +13,10 @@ public class OpenSessionState implements SessionState {
 
     @Override
     public void subscribe(Session session, Student student) {
-        if (session.availablePlaces() == 1) {
-            session.setState(new FullSessionState());
-        }
     }
 
     @Override
     public void unsubscribe(Session session, Student student) {
-        // Student can simply unsubscribe without state change.
     }
 
     @Override

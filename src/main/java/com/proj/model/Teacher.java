@@ -29,7 +29,6 @@ public class Teacher implements Observer {
         System.out.println("Notification for teacher " + name + ": " + message);
     }
 
-    // Getters and Setters
     public String getId() {
         return id;
     }
